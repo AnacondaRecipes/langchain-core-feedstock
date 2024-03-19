@@ -1,6 +1,2 @@
 upload_channels:
   - sfe1ed40
-
-channels:
-    - https://staging.continuum.io/prefect/fs/jsonpatch-feedstock/pr1/58ac14a
-    - https://staging.continuum.io/prefect/fs/packaging-feedstock/pr10/866d63c
