@@ -13,7 +13,8 @@ source:
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
+  skip: true  # [py<38]
 
 requirements:
   host:
