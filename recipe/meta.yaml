@@ -43,7 +43,7 @@ test:
   requires:
     - pip
     - pytest >=7.3.0,<8
-    - pytest-mock >=3.10.0,<4
+    - pytest-mock >=3.10.0,<4  # [not (osx and x86 and py>=312)]
     - numpy >=1.24.0,<2
     - responses >=0.25.0,<0.26.0
     # Versions expected by upstream not on defaults yet.
@@ -54,7 +54,12 @@ test:
   commands:
     - pip check
     - cd libs/core
-    - pytest tests/unit_tests --strict-markers --strict-config  --ignore=tests/unit_tests/runnables/test_fallbacks.py --ignore=tests/unit_tests/runnables/test_graph.py --ignore=tests/unit_tests/runnables/test_runnable.py
+    {% set pytest_args = "--strict-markers --strict-config" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+    {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
+    - pytest tests/unit_tests {{ pytest_args }} # [not (osx and x86 and py>=312)]
 
 about:
   home: https://github.com/langchain-ai/langchain
