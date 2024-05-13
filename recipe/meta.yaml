@@ -1,13 +1,15 @@
 {% set name = "langchain-core" %}
-{% set version = "0.1.23" %}
+{% set version = "0.1.52" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/langchain_core-{{ version }}.tar.gz
-  sha256: 34359cc8b6f8c3d45098c54a6a9b35c9f538ef58329cd943a2249d6d7b4e5806
+  url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
+  sha256: 6ee62ad7c8ce418e443f50dcf32ae61dd170a11a219a994173d872b0022872c2
+  patches:
+    - remove-pytest-options.patch
 
 build:
   number: 0
