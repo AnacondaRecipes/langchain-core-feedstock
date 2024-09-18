@@ -24,6 +24,7 @@ requirements:
     - python
     - poetry-core >=1.0.0
     - pip
+    - wheel
   run:
     - python
     - pydantic >=1,<3
@@ -72,6 +73,11 @@ about:
   doc_url: https://api.python.langchain.com/en/stable/core_api_reference.html
 
 extra:
+  anaconda-services:
+    recipe-maintainers:
+       - bkreider
+    comment: "Dependency for deepeval requested from https://anaconda.zendesk.com/agent/tickets/53943"
+
   recipe-maintainers:
     - hinthornw
     - baskaryan
@@ -79,5 +85,3 @@ extra:
     - efriis
     - agola11
     - pavelzw
-  skip-lints:
-    - missing_wheel
