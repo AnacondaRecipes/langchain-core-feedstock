@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.1.52" %}
+{% set version = "0.2.41" %}
 
 package:
   name: {{ name|lower }}
@@ -7,9 +7,7 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 6ee62ad7c8ce418e443f50dcf32ae61dd170a11a219a994173d872b0022872c2
-  patches:
-    - remove-pytest-options.patch
+  sha256: cdfa525eed9d6ee086c2a27d661c7491a61400dbb88807c11c4a2f2d9f223eff
 
 build:
   number: 0
@@ -28,8 +26,8 @@ requirements:
   run:
     - python
     - pydantic >=1,<3
-    - langsmith >=0.1.0,<0.2.0
-    - tenacity >=8.1.0,<9.0.0
+    - langsmith >=0.1.0,<0.2.0 # fixme
+    - tenacity >=8.1.0,<9.0.0,!=8.4.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3
     - packaging >=23.2.0,<24.0.0
