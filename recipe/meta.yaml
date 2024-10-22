@@ -14,7 +14,7 @@ source:
 build:
   number: 0
   script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
-  skip: true  # [py<39]
+  skip: true  # [py<39 or s390x]
 
 requirements:
   build:
