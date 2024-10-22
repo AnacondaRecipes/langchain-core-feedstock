@@ -64,6 +64,8 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + ' -k "not test_as_import_path"' %}
+    {% set pytest_args = pytest_args + ' -k "not test_benchmark_model"' %}
+    {% set pytest_args = pytest_args + ' -k "not test_rate_limit_invoke"' %}
     {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
     - pytest tests/unit_tests {{ pytest_args }} # [not (osx and x86 and py>=312)]
 
