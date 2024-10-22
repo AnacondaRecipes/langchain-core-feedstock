@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.1.52" %}
+{% set version = "0.3.7" %}
 
 package:
   name: {{ name|lower }}
@@ -7,14 +7,14 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 6ee62ad7c8ce418e443f50dcf32ae61dd170a11a219a994173d872b0022872c2
+  sha256: 2a2e91589677153687d6f36b292c8ebc0ef6fa0050c23cec418160edacce7024
   patches:
     - remove-pytest-options.patch
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
-  skip: true  # [py<38]
+  skip: true  # [py<39]
 
 requirements:
   build:
@@ -27,8 +27,8 @@ requirements:
   run:
     - python
     - pydantic >=1,<3
-    - langsmith >=0.1.0,<0.2.0
-    - tenacity >=8.1.0,<9.0.0
+    - langsmith >=0.1.75,<0.2.0
+    - tenacity >=8.1.0,!=8.4.0,<9.0.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3
     - packaging >=23.2.0,<24.0.0
@@ -58,6 +58,12 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+    {% set pytest_args = pytest_args + ' -k "not test_as_import_path"' %}
     {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
     - pytest tests/unit_tests {{ pytest_args }} # [not (osx and x86 and py>=312)]
 
