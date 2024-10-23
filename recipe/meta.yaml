@@ -64,7 +64,7 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %} # missing langchain_standard_tests
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %} # missing langchain_standard_tests
     {% set pytest_args = pytest_args + ' -k "not test_as_import_path"' %} # tarball paths don't match expected
-    - pytest -vv tests/unit_tests {{ pytest_args }}  # [not (win and osx and x86 and py>=312)]
+    - pytest -vv tests/unit_tests {{ pytest_args }}  # [not (win or (osx and x86 and py>=312))]
 
 about:
   home: https://github.com/langchain-ai/langchain
