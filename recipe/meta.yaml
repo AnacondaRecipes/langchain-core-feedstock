@@ -64,7 +64,7 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/indexing/test_indexing.py" %} # Failing due to upstream bug https://github.com/langchain-ai/langchain/issues/22135
-    {% set pytest_args = pytest_args + ' -k "not test_as_import_path"' %}
+    {% set pytest_args = pytest_args + ' -k "not (test_as_import_path or test_benchmark_model)"' %} # Our env paths don't match expected
     - pytest -vv tests/unit_tests {{ pytest_args }}  # [not (osx and x86 and py>=312)]
 
 about:
