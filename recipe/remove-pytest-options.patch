@@ -1,12 +1,13 @@
 diff --git a/libs/core/pyproject.toml b/libs/core/pyproject.toml
-index 037a3697f..f84ea04bc 100644
+index 4a26b7f35..74c12d639 100644
 --- a/libs/core/pyproject.toml
 +++ b/libs/core/pyproject.toml
-@@ -51,7 +51,6 @@ ignore = [ "UP007",]
- omit = [ "tests/*",]
+@@ -91,7 +91,7 @@ ignore = [
+ omit = ["tests/*"]
  
  [tool.pytest.ini_options]
 -addopts = "--snapshot-warn-unused --strict-markers --strict-config --durations=5"
- markers = [ "requires: mark tests as requiring a specific library", "asyncio: mark tests as requiring asyncio", "compile: mark placeholder test used to compile integration tests without running them",]
- asyncio_mode = "auto"
- filterwarnings = [ "ignore::langchain_core._api.beta_decorator.LangChainBetaWarning",]
++addopts = "--strict-markers --strict-config --durations=5"
+ markers = [
+     "requires: mark tests as requiring a specific library",
+     "compile: mark placeholder test used to compile integration tests without running them",

@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.7" %}
+{% set version = "0.3.12" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 2a2e91589677153687d6f36b292c8ebc0ef6fa0050c23cec418160edacce7024
+  sha256: 29d95e6f7bbc0819c86f227d51c873575170fcf05891b2d38cdb9da1fed917c7
   patches:
     - remove-pytest-options.patch
 
@@ -64,10 +64,10 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
     {% set pytest_args = pytest_args + ' -k "not test_as_import_path"' %}
-    {% set pytest_args = pytest_args + ' -k "not test_benchmark_model"' %}
-    {% set pytest_args = pytest_args + ' -k "not test_rate_limit_invoke"' %}
-    {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
-    - pytest tests/unit_tests {{ pytest_args }} # [not (osx and x86 and py>=312)]
+    # {% set pytest_args = pytest_args + ' -k "not test_benchmark_model"' %}
+    # {% set pytest_args = pytest_args + ' -k "not test_rate_limit_invoke"' %}
+    # {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
+    - pytest -vv tests/unit_tests {{ pytest_args }}  # [not (osx and x86 and py>=312)]
 
 about:
   home: https://github.com/langchain-ai/langchain
