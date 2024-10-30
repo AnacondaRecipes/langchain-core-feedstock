@@ -33,8 +33,6 @@ requirements:
     - pyyaml >=5.3
     - packaging >=23.2.0,<25.0.0
     - typing-extensions >=4.7,<5.0
-  run_constrained:
-    - jinja2 >=3.0.0,<4.0.0
 
 test:
   source_files:
