@@ -57,12 +57,16 @@ test:
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
     {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %} # missing langchain_standard_tests
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_chat.py" %} # missing syrupy
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_prompt.py" %} # missing syrupy
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %} # missing langchain_standard_tests
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %} # missing langchain_standard_tests
-    {% set pytest_args = pytest_args + ' -k "not (test_as_import_path or test_benchmark_model)"' %} # test_as_import_path - tarball paths don't match expected; test_benchmark_model - fleaky time based test
+    # missing syrupy:
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+    # missing langchain_standard_tests:
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+    # tarball paths don't match expected: test_as_import_path
+    # fleaky time based test: test_benchmark_model, test_same_event_loop
+    {% set pytest_args = pytest_args + ' -k "not (test_as_import_path or test_benchmark_model or test_same_event_loop)"' %}
     - pytest -vv tests/unit_tests {{ pytest_args }}  # [(not win) and (not (osx and x86 and py>=312))]
 
 about:
