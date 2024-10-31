@@ -26,7 +26,10 @@ requirements:
     - pip
   run:
     - python
-    - pydantic >=1,<3
+    # as referenced in https://github.com/pydantic/pydantic/issues/9637#issuecomment-2162873917, older than 2.7.4
+    # presents an error with py312 "TypeError: ForwardRef._evaluate() missing 1 required keyword-only argument: 'recursive_guard'"
+    - pydantic >=2.5.2,<3.0.0  # [py<312]
+    - pydantic >=2.7.4,<3.0.0  # [py>=312]
     - langsmith >=0.1.125,<0.2.0
     - tenacity >=8.1.0,!=8.4.0,<10.0.0
     - jsonpatch >=1.33.0,<2.0.0
