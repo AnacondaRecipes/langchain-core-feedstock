@@ -67,7 +67,6 @@ test:
   commands:
     - pip check
     - cd libs/core/tests
-    # - pytest -vv unit_tests {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"  # [(not win) and (not (osx and x86 and py>=312))]
     - pytest -vv unit_tests {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
 
 about:
