@@ -1,2 +1,5 @@
 upload_channels:
   - sfe1ed40
+
+channels:
+  - https://staging.continuum.io/prefect/fs/pytest-mock-feedstock/pr5/ea9a58f
