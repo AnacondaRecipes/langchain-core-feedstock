@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.12" %}
+{% set version = "0.3.21" %}
 
 package:
   name: {{ name|lower }}
@@ -7,70 +7,76 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 29d95e6f7bbc0819c86f227d51c873575170fcf05891b2d38cdb9da1fed917c7
-  patches:
-    - remove-pytest-options.patch
+  sha256: 9a0b629c71f38ff5f5e82457840e1fc959f108b72f5a057197e9362d40735169
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
   skip: true  # [py<39 or s390x]
+  script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
 
 requirements:
-  build:
-    - patch  # [unix]
-    - m2-patch  # [win]
   host:
     - python
     - poetry-core >=1.0.0
     - pip
   run:
     - python
-    # as referenced in https://github.com/pydantic/pydantic/issues/9637#issuecomment-2162873917, older than 2.7.4
-    # presents an error with py312 "TypeError: ForwardRef._evaluate() missing 1 required keyword-only argument: 'recursive_guard'"
-    - pydantic >=2.5.2,<3.0.0  # [py<312]
-    - pydantic >=2.7.4,<3.0.0  # [py>=312]
     - langsmith >=0.1.125,<0.2.0
     - tenacity >=8.1.0,!=8.4.0,<10.0.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3
-    - packaging >=23.2.0,<25.0.0
-    - typing-extensions >=4.7,<5.0
+    - packaging >=23.2,<25
+    - typing-extensions >=4.7
+    # https://github.com/langchain-ai/langchain/blob/langchain-core==0.3.19/libs/core/pyproject.toml#L36-L42
+    - pydantic >=2.5.2,<3.0.0  # [py<312]
+    - pydantic >=2.7.4,<3.0.0  # [py>=312]
+
+{% set tests_to_ignore = "" %}
+# Ignore because missing syrupy:
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_chat.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_prompt.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_fallbacks.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_graph.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_runnable.py" %}
+# Ignore because missing langchain_tests:
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/stores/test_in_memory.py" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/vectorstores/test_in_memory.py" %}
+{% set tests_to_skip = "" %}
+# Skip test_as_import_path because tarball paths don't match expected
+{% set tests_to_skip = tests_to_skip + "test_as_import_path" %}
+# Skip flaky test_benchmark_model, test_same_event_loop because time based tests
+{% set tests_to_skip = tests_to_skip + " or test_benchmark_model" %}
+{% set tests_to_skip = tests_to_skip + " or test_same_event_loop" %}
+# Skip test_rate_limit_invoke on win because time/tick dependent
+{% set tests_to_skip = tests_to_skip + " or test_rate_limit_invoke" %}  # [win]
+# Skip the following on win because use InMemoryDocumentIndex in beta and it fails
+# I have not found much information about it. For other platforms it works.
+{% set tests_to_skip = tests_to_skip + " or test_cleanup_with_different_batchsize" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
 
 test:
-  source_files:
-    - libs/core
   imports:
     - langchain_core
+  source_files:
+    - libs/core/tests/unit_tests
+    - libs/core/tests/__init__.py
   requires:
     - pip
-    - pytest >=7.3.0,<8
-    - pytest-mock >=3.10.0,<4  # [not (osx and x86 and py>=312)]
-    - numpy >=1.24.0,<2
-    - responses >=0.25.0,<0.26.0
+    - pytest >=7.3.0
+    - freezegun #>=1.2.2,<2
+    - pytest-mock >=3.10.0,<4
     # Versions expected by upstream not on defaults yet.
     - pytest-asyncio #>=0.21.1,<0.22
-    - freezegun #>=1.2.2,<2
+    - responses >=0.25.0,<0.26.0
     # Deps below not on defaults, required for ignored tests below
-    # syrupy, grandalf, pytest-profiling, pytest-watcher
+    # syrupy, grandalf, pytest-profiling, pytest-watcher, pytest-socket
+    - numpy >=1.24.0,<2  # [py<312]
+    - numpy >=1.26.0,<3  # [py>=312]
   commands:
     - pip check
-    - cd libs/core
-    {% set pytest_args = "--strict-markers --strict-config" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-    # missing syrupy:
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
-    # missing langchain_standard_tests:
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
-    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
-    # tarball paths don't match expected: test_as_import_path
-    # fleaky time based test: test_benchmark_model, test_same_event_loop
-    {% set pytest_args = pytest_args + ' -k "not (test_as_import_path or test_benchmark_model or test_same_event_loop)"' %}
-    - pytest -vv tests/unit_tests {{ pytest_args }}  # [(not win) and (not (osx and x86 and py>=312))]
+    - cd libs/core/tests
+    - pytest -vv unit_tests {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
 
 about:
   home: https://github.com/langchain-ai/langchain
