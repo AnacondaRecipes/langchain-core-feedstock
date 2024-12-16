@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.21" %}
+{% set version = "0.3.25" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 9a0b629c71f38ff5f5e82457840e1fc959f108b72f5a057197e9362d40735169
+  sha256: cd4c3bb5b7c73a1c3516ac17e8d65bf457445c4cccc119ce1283088f83e1bb75
 
 build:
   number: 0
