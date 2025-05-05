@@ -73,6 +73,7 @@ test:
     # syrupy, grandalf, pytest-profiling, pytest-watcher, pytest-socket
     - numpy >=1.24.0,<2  # [py<312]
     - numpy >=1.26.0,<3  # [py>=312]
+    - python-blockbuster
   commands:
     - pip check
     - cd libs/core/tests
