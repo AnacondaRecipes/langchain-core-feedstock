@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.25" %}
+{% set version = "0.3.58" %}
 
 package:
   name: {{ name|lower }}
@@ -7,21 +7,21 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: cd4c3bb5b7c73a1c3516ac17e8d65bf457445c4cccc119ce1283088f83e1bb75
+  sha256: 13e57e87ff86649e36373907630947e79e20ae9b7cf610517ff0d3b32120c043
 
 build:
   number: 0
-  skip: true  # [py<39 or s390x]
+  skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
 
 requirements:
   host:
     - python
-    - poetry-core >=1.0.0
+    - pdm-backend
     - pip
   run:
     - python
-    - langsmith >=0.1.125,<0.2.0
+    - langsmith >=0.1.125,<0.4.0
     - tenacity >=8.1.0,!=8.4.0,<10.0.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3
@@ -32,6 +32,8 @@ requirements:
     - pydantic >=2.7.4,<3.0.0  # [py>=312]
 
 {% set tests_to_ignore = "" %}
+# Ignore because mock Client used in these tests is missing .flush()
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/tracers/test_langchain.py" %}
 # Ignore because missing syrupy:
 {% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_chat.py" %}
 {% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_prompt.py" %}
@@ -54,6 +56,10 @@ requirements:
 # I have not found much information about it. For other platforms it works.
 {% set tests_to_skip = tests_to_skip + " or test_cleanup_with_different_batchsize" %}  # [win]
 {% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
+# This is a timing-sensitive test relying on sub-100ms timing
+{% set tests_to_skip = tests_to_skip + " or test_rate_limit_stream" %}  # [win]
+# Assertion error on windows
+{% set tests_to_skip = tests_to_skip + " or TestRunnableSequenceParallelTraceNesting" %}  # [win]
 
 test:
   imports:
@@ -73,6 +79,7 @@ test:
     # syrupy, grandalf, pytest-profiling, pytest-watcher, pytest-socket
     - numpy >=1.24.0,<2  # [py<312]
     - numpy >=1.26.0,<3  # [py>=312]
+    - python-blockbuster
   commands:
     - pip check
     - cd libs/core/tests
