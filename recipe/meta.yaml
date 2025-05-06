@@ -32,6 +32,8 @@ requirements:
     - pydantic >=2.7.4,<3.0.0  # [py>=312]
 
 {% set tests_to_ignore = "" %}
+# Ignore because mock Client used in these tests is missing .flush()
+{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/tracers/test_langchain.py" %}
 # Ignore because missing syrupy:
 {% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_chat.py" %}
 {% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_prompt.py" %}
