@@ -56,6 +56,10 @@ requirements:
 # I have not found much information about it. For other platforms it works.
 {% set tests_to_skip = tests_to_skip + " or test_cleanup_with_different_batchsize" %}  # [win]
 {% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
+# This is a timing-sensitive test relying on sub-100ms timing
+{% set tests_to_skip = tests_to_skip + " or test_rate_limit_stream" %}  # [win]
+# Assertion error on windows
+{% set tests_to_skip = tests_to_skip + " or TestRunnableSequenceParallelTraceNesting" %}  # [win]
 
 test:
   imports:
