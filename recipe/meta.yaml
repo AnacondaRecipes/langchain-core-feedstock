@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.58" %}
+{% set version = "0.2.41" %}
 
 package:
   name: {{ name|lower }}
@@ -7,37 +7,58 @@ package:
 
 source:
   url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 13e57e87ff86649e36373907630947e79e20ae9b7cf610517ff0d3b32120c043
+  sha256: cdfa525eed9d6ee086c2a27d661c7491a61400dbb88807c11c4a2f2d9f223eff
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
-  skip: True  # [py<39]
+  skip: true  # [py<38]
 
 requirements:
+  build:
+    - patch  # [unix]
+    - m2-patch  # [win]
   host:
     - python
+    - poetry-core >=1.0.0
     - pip
-    - pdm-backend
+    - wheel
   run:
     - python
-    - langsmith >=0.1.125,<0.4
-    - tenacity >=8.1.0,<10.0.0,!=8.4.0
-    - jsonpatch >=1.33,<2.0
+    - pydantic >=1,<3
+    - langsmith >=0.1.0,<0.2.0 # fixme
+    - tenacity >=8.1.0,<9.0.0,!=8.4.0
+    - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3
-    - packaging >=23.2,<25
-    - typing-extensions >=4.7
-    - pydantic >=2.5.2,<3  # [py<=312]
-    - pydantic >=2.7.4,<3  # [py>=313]
+    - packaging >=23.2.0,<24.0.0
+  run_constrained:
+    - jinja2 >=3.0.0,<4.0.0
 
 test:
+  source_files:
+    - libs/core
   imports:
     - langchain_core
   requires:
     - pip
+    - pytest >=7.3.0,<8
+    - pytest-mock >=3.10.0,<4  # [not (osx and x86 and py>=312)]
+    - numpy >=1.24.0,<2
+    - responses >=0.25.0,<0.26.0
+    # Versions expected by upstream not on defaults yet.
+    - pytest-asyncio #>=0.21.1,<0.22
+    - freezegun #>=1.2.2,<2
+    # Deps below not on defaults, required for ignored tests below
+    # syrupy, grandalf, pytest-profiling, pytest-watcher
   commands:
     - pip check
-    # Missing dependency `blockbuster` for conftest.py (can't run any tests without it)
+    - cd libs/core
+    {% set pytest_args = "--strict-markers --strict-config" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+    {% set pytest_args = pytest_args + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+    {% set pytest_args = pytest_args + ' -k "not test_async_cleanup_with_different_batchsize"' %}  # [win]
+    - pytest tests/unit_tests {{ pytest_args }} # [not (osx and x86 and py>=312)]
 
 about:
   home: https://github.com/langchain-ai/langchain
