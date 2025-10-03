@@ -1,89 +1,112 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.58" %}
+{% set version = "0.3.77" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://github.com/langchain-ai/langchain/archive/refs/tags/{{ name }}=={{ version }}.tar.gz
-  sha256: 13e57e87ff86649e36373907630947e79e20ae9b7cf610517ff0d3b32120c043
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+  sha256: 1d6f2ad6bb98dd806c6c66a822fa93808d821e9f0348b28af0814b3a149830e7
+  patches:
+    - patches/0001-patch_conftest.patch
 
 build:
   number: 0
   skip: true  # [py<39]
-  script: {{ PYTHON }} -m pip install ./libs/core --no-deps --no-build-isolation -vv
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vvv
 
 requirements:
   host:
     - python
-    - pdm-backend
     - pip
+    - pdm-backend
   run:
     - python
-    - langsmith >=0.1.125,<0.4.0
-    - tenacity >=8.1.0,!=8.4.0,<10.0.0
+    - langsmith >=0.3.45,<1.0.0
+    - tenacity >=8.1.0,<10.0.0,!=8.4.0
     - jsonpatch >=1.33.0,<2.0.0
-    - pyyaml >=5.3
-    - packaging >=23.2,<25
-    - typing-extensions >=4.7
-    # https://github.com/langchain-ai/langchain/blob/langchain-core==0.3.19/libs/core/pyproject.toml#L36-L42
-    - pydantic >=2.5.2,<3.0.0  # [py<312]
-    - pydantic >=2.7.4,<3.0.0  # [py>=312]
+    - pyyaml >=5.3.0,<7.0.0
+    - typing-extensions >=4.7.0,<5.0.0
+    - packaging >=23.2.0,<26.0.0
+    - pydantic >=2.7.4,<3.0.0
 
-{% set tests_to_ignore = "" %}
-# Ignore because mock Client used in these tests is missing .flush()
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/tracers/test_langchain.py" %}
-# Ignore because missing syrupy:
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_chat.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/prompts/test_prompt.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_fallbacks.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_graph.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/runnables/test_runnable.py" %}
 # Ignore because missing langchain_tests:
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/indexing/test_in_memory_indexer.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/stores/test_in_memory.py" %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=unit_tests/vectorstores/test_in_memory.py" %}
-{% set tests_to_skip = "" %}
-# Skip test_as_import_path because tarball paths don't match expected
-{% set tests_to_skip = tests_to_skip + "test_as_import_path" %}
-# Skip flaky test_benchmark_model, test_same_event_loop because time based tests
-{% set tests_to_skip = tests_to_skip + " or test_benchmark_model" %}
-{% set tests_to_skip = tests_to_skip + " or test_same_event_loop" %}
-# Skip test_rate_limit_invoke on win because time/tick dependent
-{% set tests_to_skip = tests_to_skip + " or test_rate_limit_invoke" %}  # [win]
-# Skip the following on win because use InMemoryDocumentIndex in beta and it fails
-# I have not found much information about it. For other platforms it works.
-{% set tests_to_skip = tests_to_skip + " or test_cleanup_with_different_batchsize" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
-# This is a timing-sensitive test relying on sub-100ms timing
-{% set tests_to_skip = tests_to_skip + " or test_rate_limit_stream" %}  # [win]
-# Assertion error on windows
-{% set tests_to_skip = tests_to_skip + " or TestRunnableSequenceParallelTraceNesting" %}  # [win]
+{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+# Ignore because missing syrupy:
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+# > raise RuntimeError('Event loop is closed')
+# E RuntimeError: Event loop is closed
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/utils/test_aiter.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_vectorstore.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/tracers/test_memory_stream.py" %}
+# >       assert 0.1 < toc - tic < 0.2
+# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index" %}  # [win]
 
 test:
+  source_files:
+    - tests
   imports:
     - langchain_core
-  source_files:
-    - libs/core/tests/unit_tests
-    - libs/core/tests/__init__.py
+    - langchain_core._api
+    - langchain_core._import_utils
+    - langchain_core.beta.runnables.context
+    - langchain_core.caches
+    - langchain_core.callbacks
+    - langchain_core.chat_history
+    - langchain_core.chat_sessions
+    - langchain_core.document_loaders
+    - langchain_core.documents
+    - langchain_core.embeddings
+    - langchain_core.env
+    - langchain_core.example_selectors
+    - langchain_core.exceptions
+    - langchain_core.globals
+    - langchain_core.indexing
+    - langchain_core.language_models
+    - langchain_core.load
+    - langchain_core.messages
+    - langchain_core.output_parsers
+    - langchain_core.outputs
+    - langchain_core.prompt_values
+    - langchain_core.prompts
+    - langchain_core.rate_limiters
+    - langchain_core.retrievers
+    - langchain_core.runnables
+    - langchain_core.stores
+    - langchain_core.sys_info
+    - langchain_core.tools
+    - langchain_core.tracers
+    - langchain_core.utils
+    - langchain_core.vectorstores
+    - langchain_core.vectorstores.utils
+    - langchain_core.version
   requires:
     - pip
-    - pytest >=7.3.0
-    - freezegun #>=1.2.2,<2
-    - pytest-mock >=3.10.0,<4
-    # Versions expected by upstream not on defaults yet.
-    - pytest-asyncio #>=0.21.1,<0.22
-    - responses >=0.25.0,<0.26.0
-    # Deps below not on defaults, required for ignored tests below
-    # syrupy, grandalf, pytest-profiling, pytest-watcher, pytest-socket
-    - numpy >=1.24.0,<2  # [py<312]
-    - numpy >=1.26.0,<3  # [py>=312]
+    - pytest >=8,<9
+    - freezegun >=1.2.2,<2.0.0
+    - pytest-mock >=3.10.0,<4.0.0
+    - pytest-asyncio >=0.21.1,<1.0.0
+    - pytest-tornasync
+    - pytest-benchmark
+    - numpy >=1.26.4  # [py<313]
+    - numpy >=2.1.0  # [py>=313]
     - python-blockbuster
   commands:
     - pip check
-    - cd libs/core/tests
-    - pytest -vv unit_tests {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v tests {{ ignore_tests }} {{ deselect_tests }}
 
 about:
   home: https://github.com/langchain-ai/langchain
@@ -103,5 +126,3 @@ extra:
     - efriis
     - agola11
     - pavelzw
-  skip-lints:
-    - missing_wheel
