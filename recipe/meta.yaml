@@ -1,18 +1,33 @@
 {% set name = "langchain-core" %}
 {% set version = "0.3.77" %}
+{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/utils/test_aiter.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_vectorstore.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/tracers/test_memory_stream.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index"' %}  # [win]
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
   sha256: 1d6f2ad6bb98dd806c6c66a822fa93808d821e9f0348b28af0814b3a149830e7
   patches:
     - patches/0001-patch_conftest.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<39]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vvv
 
@@ -32,28 +47,12 @@ requirements:
     - pydantic >=2.7.4,<3.0.0
 
 # Ignore because missing langchain_tests:
-{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
 # Ignore because missing syrupy:
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
 # > raise RuntimeError('Event loop is closed')
 # E RuntimeError: Event loop is closed
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/utils/test_aiter.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_vectorstore.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/tracers/test_memory_stream.py" %}
 # >       assert 0.1 < toc - tic < 0.2
 # E       assert (1759493103.798501 - 1759493103.555153) < 0.2
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
 # E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
-{% set deselect_tests = "" %}
-{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
-{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index" %}  # [win]
-
 test:
   source_files:
     - tests
