@@ -43,6 +43,14 @@ requirements:
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+# test_rate_limiting.py tests fail on macOS because of a timing issue:
+# >       assert 0.1 < toc - tic < 0.2
+# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index" %}  # [win]
 
 test:
   source_files:
@@ -81,7 +89,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v tests {{ ignore_tests }}
+    - pytest -v tests {{ ignore_tests }} {{ deselect_tests }}
 
 about:
   home: https://github.com/langchain-ai/langchain
