@@ -1,26 +1,26 @@
 {% set name = "langchain-core" %}
-{% set version = "0.3.77" %}
+{% set version = "1.2.6" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 1d6f2ad6bb98dd806c6c66a822fa93808d821e9f0348b28af0814b3a149830e7
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+  sha256: b4e7841dd7f8690375aa07c54739178dc2c635147d475e0c2955bf82a1afa498
   patches:
     - patches/0001-patch_conftest.patch
 
 build:
   number: 0
-  skip: true  # [py<39]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vvv
+  skip: true  # [py<310]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vv
 
 requirements:
   host:
     - python
     - pip
-    - pdm-backend
+    - hatchling
   run:
     - python
     - langsmith >=0.3.45,<1.0.0
@@ -30,7 +30,9 @@ requirements:
     - typing-extensions >=4.7.0,<5.0.0
     - packaging >=23.2.0,<26.0.0
     - pydantic >=2.7.4,<3.0.0
+    - uuid-utils >=0.12.0,<1.0
 
+{% set ignore_tests = "" %}
 # Ignore because missing langchain_tests:
 {% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
@@ -41,11 +43,7 @@ requirements:
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-# > raise RuntimeError('Event loop is closed')
-# E RuntimeError: Event loop is closed
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/utils/test_aiter.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_vectorstore.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/tracers/test_memory_stream.py" %}
+# test_rate_limiting.py tests fail on macOS because of a timing issue:
 # >       assert 0.1 < toc - tic < 0.2
 # E       assert (1759493103.798501 - 1759493103.555153) < 0.2
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
@@ -60,49 +58,34 @@ test:
   imports:
     - langchain_core
     - langchain_core._api
-    - langchain_core._import_utils
-    - langchain_core.beta.runnables.context
-    - langchain_core.caches
     - langchain_core.callbacks
-    - langchain_core.chat_history
-    - langchain_core.chat_sessions
     - langchain_core.document_loaders
     - langchain_core.documents
     - langchain_core.embeddings
-    - langchain_core.env
     - langchain_core.example_selectors
-    - langchain_core.exceptions
-    - langchain_core.globals
     - langchain_core.indexing
     - langchain_core.language_models
     - langchain_core.load
     - langchain_core.messages
     - langchain_core.output_parsers
     - langchain_core.outputs
-    - langchain_core.prompt_values
     - langchain_core.prompts
-    - langchain_core.rate_limiters
-    - langchain_core.retrievers
     - langchain_core.runnables
-    - langchain_core.stores
-    - langchain_core.sys_info
     - langchain_core.tools
     - langchain_core.tracers
     - langchain_core.utils
     - langchain_core.vectorstores
-    - langchain_core.vectorstores.utils
-    - langchain_core.version
   requires:
     - pip
-    - pytest >=8,<9
+    - pytest >=8.0.0,<9.0.0
     - freezegun >=1.2.2,<2.0.0
     - pytest-mock >=3.10.0,<4.0.0
-    - pytest-asyncio >=0.21.1,<1.0.0
+    - pytest-asyncio >=0.21.1,<1.1.0
     - pytest-tornasync
     - pytest-benchmark
     - numpy >=1.26.4  # [py<313]
     - numpy >=2.1.0  # [py>=313]
-    - python-blockbuster
+    - python-blockbuster >=1.5.18,<1.6.0
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
