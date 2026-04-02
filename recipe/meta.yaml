@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.2.7" %}
+{% set version = "1.2.24" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: e1460639f96c352b4a41c375f25aeb8d16ffc1769499fb1c20503aad59305ced
+  sha256: 9f9bc085cffb6471d0f9878dc3c083cd74d33a70d3bd03bb6dbc6107b9afd9c8
   patches:
     - patches/0001-patch_conftest.patch
 
