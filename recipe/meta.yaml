@@ -1,19 +1,38 @@
 {% set name = "langchain-core" %}
-{% set version = "1.2.24" %}
+{% set version = "1.3.2" %}
+{% set ignore_tests = "" %}
+{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
+{% set deselect_tests = 'deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index"' %}  # [win]
 
+# Ignore because missing langchain_tests:
+# Ignore because missing syrupy:
+# test_rate_limiting.py tests fail on macOS because of a timing issue:
+# >       assert 0.1 < toc - tic < 0.2
+# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
+# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 9f9bc085cffb6471d0f9878dc3c083cd74d33a70d3bd03bb6dbc6107b9afd9c8
+  sha256: fd7a50b2f28ba561fd9d7f5d2760bc9e06cf00cdf820a3ccafe88a94ffa8d5b7
   patches:
     - patches/0001-patch_conftest.patch
 
 build:
   number: 0
-  skip: true  # [py<310]
+  skip: true  # [py<3100]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vv
 
 requirements:
@@ -24,33 +43,15 @@ requirements:
   run:
     - python
     - langsmith >=0.3.45,<1.0.0
-    - tenacity >=8.1.0,<10.0.0,!=8.4.0
+    - tenacity !=8.4.0,>=8.1.0,<10.0.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3.0,<7.0.0
     - typing-extensions >=4.7.0,<5.0.0
-    - packaging >=23.2.0,<26.0.0
+    - packaging >=23.2.0
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
-
-{% set ignore_tests = "" %}
-# Ignore because missing langchain_tests:
-{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
-# Ignore because missing syrupy:
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-# test_rate_limiting.py tests fail on macOS because of a timing issue:
-# >       assert 0.1 < toc - tic < 0.2
-# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
-# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
-{% set deselect_tests = "" %}
-{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
-{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index" %}  # [win]
+    - typing_extensions >=4.7.0,<5.0.0
+    - langchain-protocol >=0.0.10
 
 test:
   source_files:
