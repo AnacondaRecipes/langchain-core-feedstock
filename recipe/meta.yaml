@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.2.24" %}
+{% set version = "1.3.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 9f9bc085cffb6471d0f9878dc3c083cd74d33a70d3bd03bb6dbc6107b9afd9c8
+  sha256: fd7a50b2f28ba561fd9d7f5d2760bc9e06cf00cdf820a3ccafe88a94ffa8d5b7
   patches:
     - patches/0001-patch_conftest.patch
 
@@ -28,9 +28,11 @@ requirements:
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3.0,<7.0.0
     - typing-extensions >=4.7.0,<5.0.0
-    - packaging >=23.2.0,<26.0.0
+    - packaging >=23.2.0
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
+    - typing_extensions >=4.7.0,<5.0.0
+    - langchain-protocol >=0.0.10
 
 {% set ignore_tests = "" %}
 # Ignore because missing langchain_tests:
