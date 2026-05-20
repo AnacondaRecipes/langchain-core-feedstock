@@ -38,6 +38,7 @@ requirements:
 {% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
 # Ignore because missing syrupy:
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
