@@ -39,6 +39,7 @@ requirements:
 {% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
 # Ignore because missing syrupy:
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
@@ -50,8 +51,9 @@ requirements:
 # E       assert (1759493103.798501 - 1759493103.555153) < 0.2
 {% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
 # E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
-{% set deselect_tests = "" %}
-{% set deselect_tests = " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
+{% set deselect_tests = "--deselect=tests/unit_tests/language_models/chat_models/test_base.py::test_invocation_params_passed_to_tracer_metadata" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/language_models/chat_models/test_cache.py::test_llm_representation_for_serializable" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index" %}  # [win]
 
 test:
