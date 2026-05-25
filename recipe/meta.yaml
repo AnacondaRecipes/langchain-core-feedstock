@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.3.2" %}
+{% set version = "1.4.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: fd7a50b2f28ba561fd9d7f5d2760bc9e06cf00cdf820a3ccafe88a94ffa8d5b7
+  sha256: 1dc341eed802ed9c117c0df3923c991e5e9e226571e5725c194eeb5bd93d1a7f
   patches:
     - patches/0001-patch_conftest.patch
 
@@ -23,6 +23,7 @@ requirements:
     - hatchling
   run:
     - python
+    - langchain-protocol >=0.0.14
     - langsmith >=0.3.45,<1.0.0
     - tenacity >=8.1.0,<10.0.0,!=8.4.0
     - jsonpatch >=1.33.0,<2.0.0
@@ -31,8 +32,6 @@ requirements:
     - packaging >=23.2.0
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
-    - typing_extensions >=4.7.0,<5.0.0
-    - langchain-protocol >=0.0.10
 
 {% set ignore_tests = "" %}
 # Ignore because missing langchain_tests:
