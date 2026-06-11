@@ -1,36 +1,15 @@
 {% set name = "langchain-core" %}
-{% set version = "1.4.2" %}
-{% set ignore_tests = "" %}
-{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
-{% set deselect_tests = "--deselect=tests/unit_tests/language_models/chat_models/test_base.py::test_invocation_params_passed_to_tracer_metadata" %}
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/unit_tests/language_models/chat_models/test_cache.py::test_llm_representation_for_serializable"' %}
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_index_into_document_index"' %}  # [win]
-{% set deselect_tests = 'deselect_tests + " --deselect=tests/unit_tests/indexing/test_indexing.py::test_aindex_into_document_index"' %}  # [win]
+{% set version = "1.4.3" %}
 
-# Ignore because missing langchain_tests:
-# Ignore because missing syrupy:
-# test_rate_limiting.py tests fail on macOS because of a timing issue:
-# >       assert 0.1 < toc - tic < 0.2
-# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
-# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 242abe763db71de05fe0d7ecff03f9cc6022fbceba8be15902fb89e35b7292f9
-  patches:
-    - patches/0001-patch_conftest.patch
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+    sha256: c127f8ac6ee7f2a431689a61f6f004e6d909b93c4396e4ec71f1f53fe38a6b5d
+    patches:
+      - patches/0001-patch_conftest.patch
 
 build:
   number: 0
@@ -44,15 +23,39 @@ requirements:
     - hatchling
   run:
     - python
-    - langchain-protocol >=0.0.14
     - langsmith >=0.3.45,<1.0.0
-    - tenacity >=8.1.0,<10.0.0,!=8.4.0
+    - tenacity !=8.4.0,>=8.1.0,<10.0.0
     - jsonpatch >=1.33.0,<2.0.0
     - pyyaml >=5.3.0,<7.0.0
     - typing-extensions >=4.7.0,<5.0.0
     - packaging >=23.2.0
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
+    - langchain-protocol >=0.0.14
+
+{% set ignore_tests = "" %}
+{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+
+{% set tests_to_skip = "test_invocation_params_passed_to_tracer_metadata" %}
+{% set tests_to_skip = tests_to_skip + " or test_llm_representation_for_serializable" %}
+{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %} # [win]
+{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %} # [win]
+
+# Ignore because missing langchain_tests:
+# Ignore because missing syrupy:
+# test_rate_limiting.py tests fail on macOS because of a timing issue:
+# >       assert 0.1 < toc - tic < 0.2
+# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
+# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
 
 test:
   source_files:
@@ -79,11 +82,10 @@ test:
     - langchain_core.vectorstores
   requires:
     - pip
-    - pytest >=8.0.0,<9.0.0
+    - pytest >=9.0.3,<10.0.0
     - freezegun >=1.2.2,<2.0.0
     - pytest-mock >=3.10.0,<4.0.0
-    - pytest-asyncio >=0.21.1,<1.1.0
-    - pytest-tornasync
+    - pytest-asyncio >=1.3.0,<2.0.0
     - pytest-benchmark
     - numpy >=1.26.4  # [py<313]
     - numpy >=2.1.0  # [py>=313]
@@ -91,7 +93,8 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -v tests {{ ignore_tests }} {{ deselect_tests }}
+    - pytest -k "not ({{ tests_to_skip }})" --override-ini="asyncio_mode=auto" -v tests {{ ignore_tests }}
+
 
 about:
   home: https://github.com/langchain-ai/langchain
@@ -101,7 +104,7 @@ about:
   license_file: LICENSE
   license_family: MIT
   dev_url: https://github.com/langchain-ai/langchain/tree/master/libs/core
-  doc_url: https://api.python.langchain.com/en/stable/core_api_reference.html
+  doc_url: https://reference.langchain.com/?lang=python
 
 extra:
   recipe-maintainers:
