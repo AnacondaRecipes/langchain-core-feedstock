@@ -1,27 +1,6 @@
 {% set name = "langchain-core" %}
 {% set version = "1.4.8" %}
-{% set ignore_tests = "" %}
-{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
-{% set tests_to_skip = "test_invocation_params_passed_to_tracer_metadata" %}
-{% set tests_to_skip = tests_to_skip + " or test_llm_representation_for_serializable" %}
-{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %}  # [win]
 
-# Ignore because missing langchain_tests:
-# Ignore because missing syrupy:
-# test_rate_limiting.py tests fail on macOS because of a timing issue:
-# >       assert 0.1 < toc - tic < 0.2
-# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
-# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
 package:
   name: {{ name }}
   version: {{ version }}
@@ -53,6 +32,30 @@ requirements:
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
     - langchain-protocol >=0.0.17
+
+{% set ignore_tests = "" %}
+{% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/stores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/vectorstores/test_in_memory.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/test_compat_bridge.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_chat.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/prompts/test_prompt.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_fallbacks.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_graph.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/runnables/test_runnable.py" %}
+{% set ignore_tests = ignore_tests + " --ignore=tests/unit_tests/language_models/chat_models/test_rate_limiting.py" %}
+
+{% set tests_to_skip = "test_invocation_params_passed_to_tracer_metadata" %}
+{% set tests_to_skip = tests_to_skip + " or test_llm_representation_for_serializable" %}
+{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %}  # [win]
+
+# Ignore because missing langchain_tests:
+# Ignore because missing syrupy:
+# test_rate_limiting.py tests fail on macOS because of a timing issue:
+# >       assert 0.1 < toc - tic < 0.2
+# E       assert (1759493103.798501 - 1759493103.555153) < 0.2
+# E       AssertionError: assert {'num_added':...m_updated': 0} == {'num_added':...m_updated': 0}
 
 test:
   source_files:
