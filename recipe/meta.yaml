@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.4.3" %}
+{% set version = "1.4.8" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-    sha256: c127f8ac6ee7f2a431689a61f6f004e6d909b93c4396e4ec71f1f53fe38a6b5d
+    sha256: 5bf1f8411077c904182ad8f975943d36adcbf579c4e017b3a118b719229ebf9a
     patches:
       - patches/0001-patch_conftest.patch
 
@@ -31,7 +31,7 @@ requirements:
     - packaging >=23.2.0
     - pydantic >=2.7.4,<3.0.0
     - uuid-utils >=0.12.0,<1.0
-    - langchain-protocol >=0.0.14
+    - langchain-protocol >=0.0.17
 
 {% set ignore_tests = "" %}
 {% set ignore_tests = " --ignore=tests/unit_tests/indexing/test_in_memory_indexer.py" %}
@@ -47,8 +47,8 @@ requirements:
 
 {% set tests_to_skip = "test_invocation_params_passed_to_tracer_metadata" %}
 {% set tests_to_skip = tests_to_skip + " or test_llm_representation_for_serializable" %}
-{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %} # [win]
-{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %} # [win]
+{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %}  # [win]
 
 # Ignore because missing langchain_tests:
 # Ignore because missing syrupy:
@@ -94,7 +94,6 @@ test:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
     - pytest -k "not ({{ tests_to_skip }})" --override-ini="asyncio_mode=auto" -v tests {{ ignore_tests }}
-
 
 about:
   home: https://github.com/langchain-ai/langchain
