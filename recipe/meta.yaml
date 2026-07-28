@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.4.8" %}
+{% set version = "1.5.1" %}
 
 package:
   name: {{ name }}
@@ -7,19 +7,19 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-    sha256: 5bf1f8411077c904182ad8f975943d36adcbf579c4e017b3a118b719229ebf9a
+    sha256: b0df382704c6403c1e0c9603415bce09290455d4aeeb38f350d15f78ca597483
     patches:
       - patches/0001-patch_conftest.patch
 
 build:
   number: 0
-  skip: true  # [py<310]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vv
+  skip: true  # [py<310]
 
 requirements:
   host:
-    - python
     - pip
+    - python
     - hatchling
   run:
     - python
