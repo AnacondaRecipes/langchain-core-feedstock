@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-    sha256: dc72e36678ed26683ec0ad8829b44011fba461d10f9b31dbd9110215e5ec2333
+    sha256: 1b156cb395aac4f009a8a1b38a574c7d948fe2d5f74c96e0d8a5017b4149e04f
     patches:
       - patches/0001-patch_conftest.patch
 
