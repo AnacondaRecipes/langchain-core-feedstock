@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.6.1" %}
+{% set version = "1.6.3" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-    sha256: 1b156cb395aac4f009a8a1b38a574c7d948fe2d5f74c96e0d8a5017b4149e04f
+    sha256: 88b430944fbd4d40fa98135d6c873581d497b6f33515d01962337548e918df2f
     patches:
       - patches/0001-patch_conftest.patch
 
@@ -48,8 +48,8 @@ requirements:
 
 {% set tests_to_skip = "test_invocation_params_passed_to_tracer_metadata" %}
 {% set tests_to_skip = tests_to_skip + " or test_llm_representation_for_serializable" %}
-{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %} # [win]
+{% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %} # [win]
 
 # Ignore because missing langchain_tests:
 # Ignore because missing syrupy:
