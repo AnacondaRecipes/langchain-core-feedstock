@@ -1,5 +1,5 @@
 {% set name = "langchain-core" %}
-{% set version = "1.6.3" %}
+{% set version = "1.6.10" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-    sha256: 88b430944fbd4d40fa98135d6c873581d497b6f33515d01962337548e918df2f
+    sha256: 3ad7a64eab150c1fea9f8a748b1c076aa1a960c5cf7c28d81a841a2f2dbffad1
     patches:
       - patches/0001-patch_conftest.patch
 
