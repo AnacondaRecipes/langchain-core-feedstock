@@ -51,6 +51,11 @@ requirements:
 {% set tests_to_skip = tests_to_skip + " or test_index_into_document_index" %} # [win]
 {% set tests_to_skip = tests_to_skip + " or test_aindex_into_document_index" %} # [win]
 
+# E AssertionError (flaky on win-arm64; passed on the automatic retry):
+# E   assert {'num_added': ..., 'deleted': 900} == {'num_added': ..., 'num_updated': 0}
+#   tests/unit_tests/indexing/test_indexing.py::test_full_cleanup_with_different_batchsize
+{% set tests_to_skip = tests_to_skip + " or test_full_cleanup_with_different_batchsize" %} # [win]
+
 # Ignore because missing langchain_tests:
 # Ignore because missing syrupy:
 # test_rate_limiting.py tests fail on macOS because of a timing issue:
