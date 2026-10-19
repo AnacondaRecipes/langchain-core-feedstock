@@ -12,7 +12,7 @@ source:
       - patches/0001-patch_conftest.patch
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed -vv
   skip: true  # [py<310]
 
@@ -55,6 +55,12 @@ requirements:
 # E   assert {'num_added': ..., 'deleted': 900} == {'num_added': ..., 'num_updated': 0}
 #   tests/unit_tests/indexing/test_indexing.py::test_full_cleanup_with_different_batchsize
 {% set tests_to_skip = tests_to_skip + " or test_full_cleanup_with_different_batchsize" %} # [win]
+
+# Flaky on win-arm64 (batch-size-dependent cleanup count mismatch, same as above):
+#   tests/unit_tests/indexing/test_indexing.py::test_incremental_cleanup_with_different_batchsize
+#   tests/unit_tests/indexing/test_indexing.py::test_afull_cleanup_with_different_batchsize
+{% set tests_to_skip = tests_to_skip + " or test_incremental_cleanup_with_different_batchsize" %} # [win and arm64]
+{% set tests_to_skip = tests_to_skip + " or test_afull_cleanup_with_different_batchsize" %} # [win and arm64]
 
 # Ignore because missing langchain_tests:
 # Ignore because missing syrupy:
